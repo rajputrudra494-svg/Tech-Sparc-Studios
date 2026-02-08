@@ -4,15 +4,38 @@ let lastScroll = 0;
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.pageYOffset;
-    
+
     if (currentScroll > 100) {
         nav.classList.add('scrolled');
     } else {
         nav.classList.remove('scrolled');
     }
-    
+
     lastScroll = currentScroll;
 });
+
+// ========== HAMBURGER MENU ==========
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+const links = document.querySelectorAll('.nav-links li');
+
+if (hamburger) {
+    hamburger.addEventListener('click', () => {
+        // Toggle Nav
+        navLinks.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+    });
+
+    // Close menu when clicking a link
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+            document.body.classList.remove('menu-open');
+        });
+    });
+}
 
 // ========== DARK MODE TOGGLE ==========
 const themeToggle = document.getElementById('themeToggle');
@@ -26,10 +49,10 @@ htmlElement.setAttribute('data-theme', currentTheme);
 function toggleTheme() {
     const currentTheme = htmlElement.getAttribute('data-theme');
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
+
     htmlElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
-    
+
     // Add animation effect
     document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
 }
@@ -50,10 +73,10 @@ document.addEventListener('keydown', (e) => {
 // ========== FORM HANDLING WITH EMAILJS ==========
 function handleSubmit(event) {
     event.preventDefault();
-    
+
     const form = event.target;
     const submitBtn = form.querySelector('.submit-btn');
-    
+
     // Get form data
     const formData = {
         name: document.getElementById('name').value.trim(),
@@ -61,22 +84,22 @@ function handleSubmit(event) {
         subject: document.getElementById('subject').value.trim(),
         message: document.getElementById('message').value.trim()
     };
-    
+
     // Validation
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
         showNotification('Please fill in all fields', 'error');
         return;
     }
-    
+
     if (!validateEmail(formData.email)) {
         showNotification('Please enter a valid email address', 'error');
         return;
     }
-    
+
     // Show loading state
     submitBtn.classList.add('loading');
     submitBtn.textContent = '';
-    
+
     // Send email using EmailJS
     // IMPORTANT: Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with your actual IDs
     emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
@@ -86,28 +109,28 @@ function handleSubmit(event) {
         message: formData.message,
         to_email: 'rajputrudra494@gmail.com'
     })
-    .then(function(response) {
-        console.log('Email sent successfully!', response.status, response.text);
-        
-        submitBtn.classList.remove('loading');
-        submitBtn.textContent = 'Send Message';
-        
-        showNotification('Thank you for reaching out! We\'ll get back to you soon.', 'success');
-        form.reset();
-        
-        // Add success animation
-        form.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-            form.style.transform = 'scale(1)';
-        }, 200);
-    }, function(error) {
-        console.error('Email sending failed:', error);
-        
-        submitBtn.classList.remove('loading');
-        submitBtn.textContent = 'Send Message';
-        
-        showNotification('Sorry, there was an error sending your message. Please try again.', 'error');
-    });
+        .then(function (response) {
+            console.log('Email sent successfully!', response.status, response.text);
+
+            submitBtn.classList.remove('loading');
+            submitBtn.textContent = 'Send Message';
+
+            showNotification('Thank you for reaching out! We\'ll get back to you soon.', 'success');
+            form.reset();
+
+            // Add success animation
+            form.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                form.style.transform = 'scale(1)';
+            }, 200);
+        }, function (error) {
+            console.error('Email sending failed:', error);
+
+            submitBtn.classList.remove('loading');
+            submitBtn.textContent = 'Send Message';
+
+            showNotification('Sorry, there was an error sending your message. Please try again.', 'error');
+        });
 }
 
 function validateEmail(email) {
@@ -119,12 +142,12 @@ function showNotification(message, type = 'success') {
     // Remove existing notification
     const existing = document.querySelector('.notification');
     if (existing) existing.remove();
-    
+
     // Create notification
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
-    
+
     // Style notification
     Object.assign(notification.style, {
         position: 'fixed',
@@ -142,15 +165,15 @@ function showNotification(message, type = 'success') {
         transform: 'translateX(400px)',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
     });
-    
+
     document.body.appendChild(notification);
-    
+
     // Animate in
     setTimeout(() => {
         notification.style.opacity = '1';
         notification.style.transform = 'translateX(0)';
     }, 10);
-    
+
     // Animate out and remove
     setTimeout(() => {
         notification.style.opacity = '0';
@@ -167,7 +190,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         if (target) {
             const offset = 80;
             const targetPosition = target.offsetTop - offset;
-            
+
             window.scrollTo({
                 top: targetPosition,
                 behavior: 'smooth'
@@ -205,12 +228,12 @@ document.querySelectorAll('.services, .projects, .contact, .about, .cta-section'
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
     const parallaxElements = document.querySelectorAll('.floating-card, .project-card, .service-card');
-    
+
     parallaxElements.forEach((el, index) => {
         const speed = 0.3 + (index * 0.05);
         const yPos = -(scrolled * speed / 10);
         const currentTransform = el.style.transform || '';
-        
+
         // Preserve hover transforms
         if (!currentTransform.includes('perspective')) {
             el.style.transform = `translateY(${yPos}px)`;
@@ -226,10 +249,10 @@ buttons.forEach(button => {
         const rect = button.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
         const y = e.clientY - rect.top - rect.height / 2;
-        
+
         button.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
     });
-    
+
     button.addEventListener('mouseleave', () => {
         button.style.transform = 'translate(0, 0)';
     });
@@ -243,13 +266,13 @@ projectCards.forEach(card => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        
+
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
-        
+
         const rotateX = (y - centerY) / 15;
         const rotateY = (centerX - x) / 15;
-        
+
         card.style.transform = `
             perspective(1000px) 
             rotateX(${rotateX}deg) 
@@ -258,7 +281,7 @@ projectCards.forEach(card => {
             scale(1.02)
         `;
     });
-    
+
     card.addEventListener('mouseleave', () => {
         card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
     });
@@ -268,7 +291,7 @@ projectCards.forEach(card => {
 const serviceCards = document.querySelectorAll('.service-card');
 
 serviceCards.forEach(card => {
-    card.addEventListener('mouseenter', function() {
+    card.addEventListener('mouseenter', function () {
         this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
     });
 });
@@ -357,12 +380,12 @@ floatingCards.forEach((card, index) => {
 const techItems = document.querySelectorAll('.tech-item');
 
 techItems.forEach(item => {
-    item.addEventListener('mouseenter', function() {
+    item.addEventListener('mouseenter', function () {
         this.style.background = 'white';
         this.style.borderRadius = '12px';
     });
-    
-    item.addEventListener('mouseleave', function() {
+
+    item.addEventListener('mouseleave', function () {
         this.style.background = 'var(--bg)';
     });
 });
@@ -371,11 +394,11 @@ techItems.forEach(item => {
 const socialIcons = document.querySelectorAll('.social-icon');
 
 socialIcons.forEach(icon => {
-    icon.addEventListener('mouseenter', function() {
+    icon.addEventListener('mouseenter', function () {
         this.style.transform = 'translateY(-5px) rotate(5deg)';
     });
-    
-    icon.addEventListener('mouseleave', function() {
+
+    icon.addEventListener('mouseleave', function () {
         this.style.transform = 'translateY(0) rotate(0)';
     });
 });
@@ -398,7 +421,7 @@ function initCursorGlow() {
         display: none;
     `;
     document.body.appendChild(cursorGlow);
-    
+
     document.addEventListener('mousemove', (e) => {
         if (cursorGlow) {
             cursorGlow.style.display = 'block';
@@ -418,11 +441,11 @@ const konamiPattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLef
 document.addEventListener('keydown', (e) => {
     konamiCode.push(e.key);
     konamiCode.splice(-konamiPattern.length - 1, konamiCode.length - konamiPattern.length);
-    
+
     if (konamiCode.join('') === konamiPattern.join('')) {
         document.body.style.animation = 'rainbow 2s linear infinite';
         showNotification('🎉 You found the secret! 🎉', 'success');
-        
+
         setTimeout(() => {
             document.body.style.animation = '';
         }, 2000);
@@ -443,7 +466,7 @@ document.head.appendChild(style);
 window.addEventListener('load', () => {
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.5s ease';
-    
+
     setTimeout(() => {
         document.body.style.opacity = '1';
     }, 100);
@@ -453,11 +476,11 @@ window.addEventListener('load', () => {
 const formInputs = document.querySelectorAll('.form-group input, .form-group textarea');
 
 formInputs.forEach(input => {
-    input.addEventListener('focus', function() {
+    input.addEventListener('focus', function () {
         this.parentElement.style.transform = 'scale(1.02)';
     });
-    
-    input.addEventListener('blur', function() {
+
+    input.addEventListener('blur', function () {
         this.parentElement.style.transform = 'scale(1)';
     });
 });
